@@ -1,0 +1,34 @@
+#
+# 'Compile' a ASN.1 module into C source code. 
+#  Keep the ASN.1 module source in a separate directory.
+#
+cd asn1c/asn1c.output/
+asn1c -pdu=all ../epics2camac.asn1 
+
+#
+#  Build a parser/converter from the asn1c output
+#
+gcc -DPDU=CamacReqFrame -I. -o epics2camcac_enc *.c
+gcc -DPDU=RequestFramePayload -I. -o epics2camcac_enc *.c
+
+#
+# For every PDU type that is defined in the ASN.1 module, create
+# a working parser/encode/decoder for that PDU type.
+#
+for pdu in $(ls *.h | grep Re); do echo $pdu; gcc -DPDU=${pdu/.h/} -I. -o convert_${pdu/.h/} *.c ; done
+
+#
+#  Test one of the converters by reading an XML input file, 
+#  and having it produce a BER output stream.
+#  Have a look at the resulting output file.
+#
+vi ../CamamcCycleReq.xml
+./convert_CamacCycleReq -ixer -oder -d ../CamamcCycleReq.xml > ../CamacCycleReq.ber
+od -tx1 ../CamacCycleReq.ber 
+
+#
+#  Use the converter to read the previously generated BER stream, and
+#  verify that it converts back to the equivalent XML.
+#
+./convert_CamacCycleReq -iber  -d ../CamacCycleReq.ber
+

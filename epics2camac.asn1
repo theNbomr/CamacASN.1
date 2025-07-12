@@ -1,0 +1,67 @@
+EPICS2CAMAC DEFINITIONS AUTOMATIC TAGS ::=    
+BEGIN
+--
+-- A basic CAMAC cycle request.
+--
+BasicCycleRequest ::= SEQUENCE {
+   id  INTEGER,
+   b   INTEGER,
+   c   INTEGER,
+   n   INTEGER(1..25),
+   a   INTEGER(0..15),
+   f   INTEGER(0..31)
+}
+
+-- 
+--  Camac cycle request for a read
+--
+CamacCycleRequestR ::= BasicCycleRequest
+
+-- 
+--  CAMAC Write cycle request
+--
+CamacCycleRequestW ::= SEQUENCE {
+    requestW   BasicCycleRequest,
+    wdata      INTEGER
+}
+
+--
+--  Payload of a Request ethernet frame
+--
+CamacRequestFrame ::= SET OF   
+    -- Elements can be in any order, and any are optional
+    requesttype  CHOICE {
+        requestR    CamacCycleRequestR,
+        requestW    CamacCycleRequestW
+    }
+
+
+--
+--  Reply to a Write request; no data replied
+--
+CamacCycleReplyW ::= SEQUENCE {
+   requestW    BasicCycleRequest,
+   status      INTEGER
+}
+
+--
+--  Reply to a Read request; read data included
+--
+CamacCycleReplyR ::= SEQUENCE {
+   requestR    BasicCycleRequest,
+   status      INTEGER,
+   rdata       INTEGER
+}
+
+--
+--  Payload of a Reply ethernet frame
+--
+CamacReplyFrame ::= SET OF
+    -- Elements can be in any order, and any are optional
+    replytype  CHOICE {
+        replyR    CamacCycleReplyR,
+        replyW    CamacCycleReplyW
+    }
+
+END
+

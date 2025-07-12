@@ -1,0 +1,74 @@
+ASN1C_SRCS = asn_codecs_prim.c   \
+	INTEGER.c   \
+	BIT_STRING.c   \
+	OCTET_STRING.c   \
+	asn_SET_OF.c   \
+	constraints.c   \
+	constr_CHOICE.c   \
+	constr_SEQUENCE.c   \
+	constr_SET.c   \
+	constr_SET_OF.c   \
+	constr_TYPE.c   \
+	ber_tlv_length.c   \
+	ber_tlv_tag.c   \
+	NativeEnumerated.c   \
+	NativeInteger.c   \
+	pdu_collection.c   \
+	der_encoder.c   \
+	ber_decoder.c   \
+	per_decoder.c   \
+	per_encoder.c   \
+	per_opentype.c   \
+	per_support.c   \
+	xer_decoder.c   \
+	xer_encoder.c   \
+	xer_support.c
+
+PRJ_SRCS = CamacCycleReplyR.c   \
+	CamacCycleReplyW.c   \
+	CamacCycleRequestR.c   \
+	CamacCycleRequestW.c   \
+	CamacReplyFrame.c   \
+	CamacRequestFrame.c   \
+	BasicCycleRequest.c   \
+	exampleASN1-Decoder.c   \
+	exampleASN1-Encoder.c   \
+	converter-sample.c
+
+ASN1C_OBJS = asn_codecs_prim.o   \
+	INTEGER.o   \
+	BIT_STRING.o   \
+	OCTET_STRING.o   \
+	asn_SET_OF.o   \
+	constraints.o   \
+	constr_CHOICE.o   \
+	constr_SEQUENCE.o   \
+	constr_SET.o   \
+	constr_SET_OF.o   \
+	constr_TYPE.o   \
+	ber_tlv_length.o   \
+	ber_tlv_tag.o   \
+	NativeEnumerated.o   \
+	NativeInteger.o   \
+	pdu_collection.o   \
+	der_encoder.o   \
+	ber_decoder.o   \
+	per_decoder.o   \
+	per_encoder.o   \
+	per_opentype.o   \
+	per_support.o   \
+	xer_decoder.o   \
+	xer_encoder.o   \
+	xer_support.o
+
+PRJ_OBJS = CamacCycleReplyR.o   \
+	CamacCycleReplyW.o   \
+	CamacCycleRequestR.o   \
+	CamacCycleRequestW.o   \
+	CamacReplyFrame.o   \
+	CamacRequestFrame.o   \
+	BasicCycleRequest.o   \
+	exampleASN1-Decoder.o   \
+	exampleASN1-Encoder.o   \
+	converter-sample.o
+
