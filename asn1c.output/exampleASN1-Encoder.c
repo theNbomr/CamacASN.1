@@ -10,33 +10,119 @@
 #include    <CamacRequestFrame.h>
 #include    <CamacReplyFrame.h>
 
-int main( int argc, char * argv[] ){
 
-/* Rectangle_t *rectangle;              /* Type to encode */
-CamacRequestFrame_t * camacRequestFrame;  /* Type to encode */
-CamacReplyFrame_t   * camacReplyFrame;  /* Type to encode */
+static int write_out( const void *buffer, 
+                          size_t size, 
+                            void *app_key);
+
+
+int main( int argc, char * argv[] ){
+    
+const char *filename = argv[1];
+FILE *fp;
+
+CamacRequestFrame_t  * camacRequestFrame;  /* Type to encode */
+CamacReplyFrame_t    * camacReplyFrame;  /* Type to encode */
+CamacCycleRequestR_t * camacCycleRequestR;
+CamacCycleRequestW_t * camacCycleRequestW;
+BasicCycleRequest_t  * basicCycleRequestR;
+BasicCycleRequest_t  * basicCycleRequestW;
+
 asn_enc_rval_t      ec;                 /* Encoder return value */
 
     /* Allocate the CamacRequestFrame_t 
     */
     camacRequestFrame = (CamacRequestFrame_t *)calloc(1, sizeof(CamacRequestFrame_t)); /* not malloc! */
-    if(!camacRequestFrame) {
+    
+    /* Allocate all of the nested sub-elements individually
+     */ 
+    basicCycleRequestR = (BasicCycleRequest_t *)calloc( 1, sizeof( BasicCycleRequest_t) );
+    basicCycleRequestW = (BasicCycleRequest_t *)calloc( 1, sizeof( BasicCycleRequest_t) );
+    camacCycleRequestW = (CamacCycleRequestW_t *)calloc( 1, sizeof( CamacCycleRequestW_t) );
+    camacCycleRequestR = (CamacCycleRequestR_t *)calloc( 1, sizeof( CamacCycleRequestR_t) );
+    camacRequestFrame = (CamacRequestFrame_t *)calloc( 1, sizeof( CamacRequestFrame_t ) );
+    if( !camacRequestFrame  || 
+        !camacCycleRequestR || 
+        !camacCycleRequestW ||
+        !basicCycleRequestR ||
+        !camacRequestFrame  ||
+        !basicCycleRequestW ){
+        
         perror("calloc() failed");
         exit(1);
     }
-        
 
-    /* Initialize the Rectangle members 
-    */
-    // rectangle->height = 42; /* any random value */
-    // rectangle->width = 23;  /* any random value */
     
-    camacRequestFrame->choice.requestW->b = 1;
-    camacRequestFrame->choice.requestW->c = 2;
-    camacRequestFrame->choice.requestW->n = 3;
-    camacRequestFrame->choice.requestW->a = 4;
-    camacRequestFrame->choice.requestW->f = 5;
-    camacRequestFrame->requestW.wdata = 0xabcdef;
+    /* Build up the RequestFrame from its initialized component parts
+     */
+    basicCycleRequestR->id = 0x0;
+    basicCycleRequestR->b  = 1;
+    basicCycleRequestR->c  = 2;
+    basicCycleRequestR->n  = 3;
+    basicCycleRequestR->a  = 4;
+    basicCycleRequestR->f  = 5;
+    
+    basicCycleRequestW->id = 0x80;
+    basicCycleRequestW->b  = 1;
+    basicCycleRequestW->c  = 2;
+    basicCycleRequestW->n  = 3;
+    basicCycleRequestW->a  = 4;
+    basicCycleRequestW->f  = 5;
+
+    camacCycleRequestR = basicCycleRequestR;  // types are equivalent
+    
+    camacCycleRequestW->requestW = *basicCycleRequestW;
+    camacCycleRequestW->wdata = 0xabcdef;
+    
+    /* How to build up the Set of Choices...  ?
+     */
+
+    // /* CamacRequestFrame */
+    // typedef struct CamacRequestFrame {
+    //     A_SET_OF(struct requesttype {
+    //         requesttype_PR present;
+    //         union CamacRequestFrame__requesttype_u {
+    //             CamacCycleRequestR_t	 requestR;
+    //             CamacCycleRequestW_t	 requestW;
+    //         } choice;
+    //
+    //         /* Context for parsing across buffer boundaries */
+    //         asn_struct_ctx_t _asn_ctx;
+    //     } ) list;
+    //
+    //     /* Context for parsing across buffer boundaries */
+    //     asn_struct_ctx_t _asn_ctx;
+    // } CamacRequestFrame_t;
+    
+    // typedef enum requesttype_PR {
+    //     requesttype_PR_NOTHING,	/* No components present */
+    //     requesttype_PR_requestR,
+    //     requesttype_PR_requestW
+    // } requesttype_PR;
+   
+    typedef union CamacRequestFrame__requesttype_u {
+        CamacCycleRequestR_t	 requestR;
+        CamacCycleRequestW_t	 requestW;
+    } CamacRequestFrame__requesttype_u_t;
+     
+    typedef struct requesttype {
+        requesttype_PR              present;
+        CamacRequestFrame__requesttype_u_t   choice;    
+        asn_struct_ctx_t            _asn_ctx;
+    } requesttype_t;
+     
+     
+    requesttype_t * cycle0 = (requesttype_t *)calloc( 1, sizeof( requesttype_t ) );
+    requesttype_t * cycle1 = (requesttype_t *)calloc( 1, sizeof( requesttype_t ) );
+
+    cycle0->present = requesttype_PR_requestR;
+    cycle0->choice.requestR = *camacCycleRequestR;
+    
+    cycle1->present = requesttype_PR_requestW;
+    cycle0->choice.requestW = *camacCycleRequestW;
+
+    asn_set_add( camacRequestFrame, cycle0 );
+    asn_set_add( camacRequestFrame, cycle1 );
     
     /* BER encode the data if filename is given 
     */
@@ -45,8 +131,8 @@ asn_enc_rval_t      ec;                 /* Encoder return value */
     } 
     else {
         
-        const char *filename = argv[1];
-        FILE *fp = fopen(filename, "wb");
+        filename = argv[1];
+        fp = fopen(filename, "wb");
         
         /* for BER output 
         */
