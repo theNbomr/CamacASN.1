@@ -1,4 +1,4 @@
-# EPICS to CAMAC protocol using *ASN.1* and the asn1c compiler tools.
+# EPICS to CAMAC protocol using *ASN.1* and the *asn1c* compiler tools.
 This is to explore the use of *ASN.1* notsation and the *asn1c* implementation of *ASN.1* compiler and skeleton code generator.
 
 ### What has been accomplished so far?
@@ -26,7 +26,7 @@ although I never intended for itto be compiled.
 * More thorough testing and fleshing the reference implementation into something more general-purpose.
 * Integrating the asn1c compilation process into the Makefile workflow.
     * Probably this will require some scripting to handle the changing collection of source files that will be created when new ASN.1 syntax is introduced to the project.
-* Create some protocol hanlders for the use of CAMAC LAMS
+* Create some protocol handlers for the use of CAMAC LAMS
 * Create some protocol handlers for the use of Diagnostics modes and status monitors
 * Create a testbed implementation that uses actual netowrk or other communications channels
 
@@ -52,3 +52,7 @@ although I never intended for itto be compiled.
 #	RN - 2025-Jul-13 
 # ================================================================
 ```
+### References:
+1. asn1c <https://github.com/vlm/asn1c>
+2. claude.io  <https://claude.ai/share/9c96387d-d6af-4e0b-8b7b-73335263356c>
+3. EPICS <https://epics-controls.org>
