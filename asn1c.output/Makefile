@@ -22,6 +22,7 @@ CC = gcc
 CFLAGS = -I .
 CFLAGS += -fPIC
 CFLAGS += -D_DEFAULT_SOURCE
+CFLAGS += -g
 
 LDFLAGS = -L .
 
@@ -65,8 +66,8 @@ PRJ_OBJS = CamacCycleReplyR.o   \
 	CamacCycleRequestW.o   \
 	CamacReplyFrame.o   \
 	CamacRequestFrame.o   \
-	BasicCycleRequest.o
-#	converter-sample.o
+	BasicCycleRequest.o  \
+	epics2camacProtocol.o
 
 DECODER_OBJS = exampleASN1-Decoder.o exampleASN1-Encoder.o
 
@@ -86,6 +87,11 @@ exampleASN1-Encoder : exampleASN1-Encoder.o $(PRJ_OBJS) libasn1c.so
 libasn1c.so : $(ASN1C_OBJS) 
 	$(CC) -shared -o $@ $^
 
+exampleASN1-Encoder.o : exampleASN1-Encoder.c epics2camac.h
+
+exampleASN1-Decoder.o : exampleASN1-Decoder.c epics2camac.h
+
+epics2camacProtocol.o : epics2camacProtocol.c epics2camac.h
 
 .o:.c	
 	$(CC) $(CFLAGS) $< -o $@

@@ -4,7 +4,7 @@
 static int  cycleId(){
 static int  id = 0;
 
-    return( ++id % 0x100 );
+    return( id++ % 0x100 );
 }
 
 
@@ -28,7 +28,7 @@ requesttype_t * cycle;
     basicCycleRequest = (BasicCycleRequest_t *)calloc( 1, sizeof( BasicCycleRequest_t) );
     if( !basicCycleRequest ){  perror("calloc() failed"); return( NULL ); }
 
-    basicCycleRequest->id = 0x0;
+    basicCycleRequest->id = cycleId();
     basicCycleRequest->b  = b;
     basicCycleRequest->c  = c;
     basicCycleRequest->n  = n;
