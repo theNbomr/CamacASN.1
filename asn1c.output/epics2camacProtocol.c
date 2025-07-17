@@ -1,8 +1,17 @@
+/* 
+ * Compose a CAMAC Cycle request PDU with
+ * runtime-specified values.
+*/
+
 
 #include "epics2camac.h"
 
+typedef struct requesttype requesttype_t;
+typedef union CamacRequestFrame__requesttype_u CamacRequestFrame__requesttype_u_t;
+
+
 static int  cycleId(){
-static int  id = 0;
+static int  id;
 
     return( id++ % 0x100 );
 }
@@ -11,19 +20,17 @@ static int  id = 0;
 /* Instantiate a request cycle with the specified pararameters
 */
 
-requesttype_t * buildCycleRequest( uint8_t e, 
-                                   uint8_t b, 
-                                   uint8_t c, 
-                                   uint8_t n, 
-                                   uint8_t a, 
-                                   uint8_t f, 
-                            requesttype_PR present, 
-                                  uint32_t wdata ){
+BasicCycleRequest_t  * buildCycle(  uint8_t e, 
+                                    uint8_t b, 
+                                    uint8_t c, 
+                                    uint8_t n, 
+                                    uint8_t a, 
+                                    uint8_t f 
+                                 // requesttype_PR present, 
+                                 //    uint32_t wdata 
+                                    ){
 
-CamacCycleRequestR_t * camacCycleRequestR;
-CamacCycleRequestW_t * camacCycleRequestW;
 BasicCycleRequest_t  * basicCycleRequest;
-requesttype_t * cycle;
 
     basicCycleRequest = (BasicCycleRequest_t *)calloc( 1, sizeof( BasicCycleRequest_t) );
     if( !basicCycleRequest ){  perror("calloc() failed"); return( NULL ); }
@@ -34,18 +41,31 @@ requesttype_t * cycle;
     basicCycleRequest->n  = n;
     basicCycleRequest->a  = a;
     basicCycleRequest->f  = f;
+    // basicCycleRequest->present = present;
 
-    cycle = (requesttype_t *)calloc( 1, sizeof( requesttype_t ) );
-    if( !cycle ){  
+    return( basicCycleRequest );
+}
+
+
+
+requesttype_t * buildRequest( BasicCycleRequest_t * basicCycle, requesttype_PR present, uint32_t wData ){
+
+requesttype_t * request;
+CamacCycleRequestR_t * camacCycleRequestR;
+CamacCycleRequestW_t * camacCycleRequestW;
+
+    request = (requesttype_t *)calloc( 1, sizeof( requesttype_t ) );
+    if( !request ){  
         perror("calloc() failed"); 
-        free( basicCycleRequest );
+        // free( basicCycle );
         return( NULL ); 
     }
     
     switch( present ){
         case requesttype_PR_NOTHING : /* No components present */
-            free( cycle );
-        break;
+            free( request );
+            request = NULL;
+            break;
 
         case requesttype_PR_requestR :
             /* Read requests are just the basic request; no data 
@@ -53,17 +73,20 @@ requesttype_t * cycle;
             camacCycleRequestR = (CamacCycleRequestR_t *)calloc( 1, sizeof( CamacCycleRequestR_t) );
             if( !camacCycleRequestR ){  
                 perror("calloc() failed");
-                free( basicCycleRequest );
-                free( cycle );
+                free( basicCycle );
+                free( request );
                 return( NULL ); 
             }
 
-            camacCycleRequestR = basicCycleRequest;  // types are equivalent
+            // Arrrgggg....!  This prevents us from updating basicCylce asynchronously to for a new request...
+            *camacCycleRequestR = *basicCycle;  // types are equivalent
+            free( basicCycle );  // Might as well; we've made a copy here
 
             /* Flesh out the CHOICE union
             */
-            cycle->present = requesttype_PR_requestR;
-            cycle->choice.requestR = *camacCycleRequestR;
+            request->present = requesttype_PR_requestR;
+            request->choice.requestR = *camacCycleRequestR;
+            free(camacCycleRequestR );
             break;
 
         case requesttype_PR_requestW :
@@ -72,20 +95,21 @@ requesttype_t * cycle;
             camacCycleRequestW = (CamacCycleRequestW_t *)calloc( 1, sizeof( CamacCycleRequestW_t) );
             if( !camacCycleRequestW ){  
                 perror("calloc() failed");
-                free( basicCycleRequest );
-                free( cycle );
+                free( basicCycle );
+                free( request );
                 return( NULL ); 
             }
 
-            camacCycleRequestW->requestW = *basicCycleRequest;
-            camacCycleRequestW->wdata = wdata;
+            camacCycleRequestW->requestW = *basicCycle;
+            free( basicCycle );
+            camacCycleRequestW->wdata = wData;
 
             /* Flesh out the CHOICE union
             */
-            cycle->present = requesttype_PR_requestW;
-            cycle->choice.requestW = *camacCycleRequestW;
+            request->present = requesttype_PR_requestW;
+            request->choice.requestW = *camacCycleRequestW;
+            free(camacCycleRequestW );
             break;
     }
-    return( cycle );
+    return( request );
 }
-

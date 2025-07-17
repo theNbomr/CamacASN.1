@@ -23,14 +23,17 @@
 typedef struct requesttype requesttype_t;
 typedef union CamacRequestFrame__requesttype_u CamacRequestFrame__requesttype_u_t;
 
-requesttype_t * buildCycleRequest( uint8_t e, 
-                                   uint8_t b, 
-                                   uint8_t c, 
-                                   uint8_t n, 
-                                   uint8_t a, 
-                                   uint8_t f, 
-                            requesttype_PR present, 
-                                  uint32_t wdata );
+BasicCycleRequest_t  * buildCycle(  uint8_t e, 
+                                    uint8_t b, 
+                                    uint8_t c, 
+                                    uint8_t n, 
+                                    uint8_t a, 
+                                    uint8_t f 
+                                 // requesttype_PR present, 
+                                 //    uint32_t wdata 
+                                    );
+                                    
+requesttype_t * buildRequest( BasicCycleRequest_t * basicCycle, requesttype_PR present, uint32_t wData  );
 
     // typedef struct CamacRequestFrame {
     //      A_SET_OF(

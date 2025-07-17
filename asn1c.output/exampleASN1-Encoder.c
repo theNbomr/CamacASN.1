@@ -24,30 +24,18 @@ FILE *fp;
 CamacRequestFrame_t  * camacRequestFrame;  /* Type to encode */
 CamacReplyFrame_t    * camacReplyFrame;  /* Type to encode */
 
-requesttype_t        * camacCycleChoiceR;
-requesttype_t        * camacCycleChoiceW;
+BasicCycleRequest_t * basicCycleR;
+BasicCycleRequest_t * basicCycleW;
+
+requesttype_t        * requestR;
+requesttype_t        * requestW;
 
 CamacCycleRequestR_t * camacCycleRequestR;
 CamacCycleRequestW_t * camacCycleRequestW;
 
+
 asn_enc_rval_t      ec;                 /* Encoder return value */
 
-    camacRequestFrame = (CamacRequestFrame_t *)calloc( 1, sizeof( CamacRequestFrame_t ) );
-    if( !camacRequestFrame ){
-        perror( "calloc( CamacRequestFrame_t ) failed" );
-        exit(1);
-    }
-
-    requesttype_t * cycle1 = buildCycleRequest( 1, 1, 2, 3, 4, 5, requesttype_PR_requestR, 0xffffffff );
-    requesttype_t * cycle2 = buildCycleRequest( 1, 1, 2, 3, 4, 5, requesttype_PR_requestW, 0xabcdef );
-
-    /* Populate the request frame with 2 cycles already composed; one Read & one Write 
-     */
-    asn_set_add( camacRequestFrame, cycle1 );
-    asn_set_add( camacRequestFrame, cycle2 );
-    
-    printf( "Ready to encode to BER\n" );
-    
     /* BER encode the data if filename is given 
     */
     if(argc < 2) {
@@ -66,6 +54,27 @@ asn_enc_rval_t      ec;                 /* Encoder return value */
         }
     }
     
+
+    basicCycleR = buildCycle( 1, 1, 2, 3, 4, 5 );
+    basicCycleW = buildCycle( 1, 1, 2, 3, 4, 22 );
+
+    /* Use dummy wdata for read cycle requests */
+    requestR = buildRequest( basicCycleR, requesttype_PR_requestR, 0xffffffff );
+    requestW = buildRequest( basicCycleW, requesttype_PR_requestW, 0xabcdef );
+
+    camacRequestFrame = (CamacRequestFrame_t *)calloc( 1, sizeof( CamacRequestFrame_t ) );
+    if( !camacRequestFrame ){
+        perror( "calloc( CamacRequestFrame_t ) failed" );
+        exit(1);
+    }
+
+    /* Populate the request frame with 2 cycles already composed; one Read & one Write 
+     */
+    asn_set_add( camacRequestFrame, requestR );
+    asn_set_add( camacRequestFrame, requestW );
+    
+    printf( "Ready to encode to BER\n" );
+    
     
     /* Encode the Rectangle type as BER (DER) 
     */
@@ -73,7 +82,7 @@ asn_enc_rval_t      ec;                 /* Encoder return value */
     ec = der_encode(&asn_DEF_CamacRequestFrame, camacRequestFrame, write_out, fp);
     
     if(ec.encoded == -1) {
-        fprintf(stderr, "Could not encode Rectangle (at %s)\n",
+        fprintf(stderr, "Could not encode epics2camac request (at %s)\n",
                             ec.failed_type ? ec.failed_type->name : "unknown");
         exit(1);
     } 
@@ -85,14 +94,21 @@ asn_enc_rval_t      ec;                 /* Encoder return value */
     */
     xer_fprint(stdout, &asn_DEF_CamacRequestFrame, camacRequestFrame );
 
-    /* FIXME:  Figure out how to de-allocate all of the calloc()'d memory 
-     */
 
-    asn_set_del( camacRequestFrame, 2, 1);
+
+    /* =======================================================================
+     *      FIXME:  Figure out how to de-allocate all of the calloc()'d memory 
+     * =======================================================================
+     */
+    // asn_set_del( camacRequestFrame, 1, 1);
+    // asn_set_add( camacRequestFrame, requestW );
+
+    // free( requestR );
+    // free( requestW );
     ec = der_encode(&asn_DEF_CamacRequestFrame, camacRequestFrame, write_out, fp);
     
     if(ec.encoded == -1) {
-        fprintf(stderr, "Could not encode Rectangle (at %s)\n",
+        fprintf(stderr, "Could not encode CamacRequestFrame (at %s)\n",
                             ec.failed_type ? ec.failed_type->name : "unknown");
         exit(1);
     } 
