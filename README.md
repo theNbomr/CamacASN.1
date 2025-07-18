@@ -1,5 +1,5 @@
 # EPICS to CAMAC protocol using *ASN.1* and the *asn1c* compiler tools.
-This is to explore the use of *ASN.1* notsation and the *asn1c* implementation of *ASN.1* compiler and skeleton code generator.
+This is to explore the use of *ASN.1* notation and the *asn1c* implementation of *ASN.1* compiler and skeleton code generator.
 
 ### What has been accomplished so far?
 
