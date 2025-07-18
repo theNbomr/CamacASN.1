@@ -26,6 +26,7 @@ although I never intended for itto be compiled.
 * More thorough testing and fleshing the reference implementation into something more general-purpose.
 * Integrating the asn1c compilation process into the Makefile workflow.
     * Probably this will require some scripting to handle the changing collection of source files that will be created when new ASN.1 syntax is introduced to the project.
+    * [RN] added PduType enumeration, and this required adding .c & .h files to the Makefile and to the repository
 * Create some protocol handlers for the use of CAMAC LAMS
 * Create some protocol handlers for the use of Diagnostics modes and status monitors
 * Create a testbed implementation that uses actual netowrk or other communications channels
