@@ -11,15 +11,15 @@ and and EPICS IOC (or other arbitrary network host) has been developed.
  
 * A reference application for one encoder and one decoder have been implemented.
 	
-* A Makfile that describes the nature of the build process and some organization 
+* A Makefile that describes the nature of the build process and some organization 
 of the source code collection has been created.
 
 Of course, the usual example code doesn't touch the complex real-world cases. For that, I needed the help of 
-AI, and a Reddit poster suggested Claude.IO. I did so, and the results were quite impressive; withut it I would 
-not have known about the undocumented macros and functions for manipulting the C structures that implement the
+AI, and a Reddit poster suggested Claude.IO. I did so, and the results were quite impressive; without it I would 
+not have known about the undocumented macros and functions for manipulating the C structures that implement the
 ASN.1 SET, SEQUENCE, SET OF & SEQUENCE OF data structures. It also provided helpful information about the 
 CHOICE structure. The source code samples provided by <Claude.io> have been folded into a C language source file,
-although I never intended for itto be compiled.
+although I never intended for it to be compiled.
 
 ### To-Do
 
