@@ -12,6 +12,7 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include "PduType.h"
 #include "BasicCycleRequest.h"
 #include <NativeInteger.h>
 #include <constr_SEQUENCE.h>
@@ -22,6 +23,7 @@ extern "C" {
 
 /* CamacCycleReplyW */
 typedef struct CamacCycleReplyW {
+	PduType_t	 pduType;
 	BasicCycleRequest_t	 requestW;
 	long	 status;
 	

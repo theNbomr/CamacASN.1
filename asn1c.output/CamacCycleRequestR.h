@@ -12,24 +12,25 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include "PduType.h"
 #include "BasicCycleRequest.h"
+#include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* CamacCycleRequestR */
-typedef BasicCycleRequest_t	 CamacCycleRequestR_t;
+typedef struct CamacCycleRequestR {
+	PduType_t	 pduType;
+	BasicCycleRequest_t	 basicCycle;
+	
+	/* Context for parsing across buffer boundaries */
+	asn_struct_ctx_t _asn_ctx;
+} CamacCycleRequestR_t;
 
 /* Implementation */
 extern asn_TYPE_descriptor_t asn_DEF_CamacCycleRequestR;
-asn_struct_free_f CamacCycleRequestR_free;
-asn_struct_print_f CamacCycleRequestR_print;
-asn_constr_check_f CamacCycleRequestR_constraint;
-ber_type_decoder_f CamacCycleRequestR_decode_ber;
-der_type_encoder_f CamacCycleRequestR_encode_der;
-xer_type_decoder_f CamacCycleRequestR_decode_xer;
-xer_type_encoder_f CamacCycleRequestR_encode_xer;
 
 #ifdef __cplusplus
 }

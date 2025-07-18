@@ -20,7 +20,7 @@ static int  id;
 /* Instantiate a request cycle with the specified pararameters
 */
 
-BasicCycleRequest_t  * buildCycle(  uint8_t e, 
+BasicCycleRequest_t  * buildCycle(  uint8_t g, 
                                     uint8_t b, 
                                     uint8_t c, 
                                     uint8_t n, 
@@ -36,11 +36,13 @@ BasicCycleRequest_t  * basicCycleRequest;
     if( !basicCycleRequest ){  perror("calloc() failed"); return( NULL ); }
 
     basicCycleRequest->id = cycleId();
+    basicCycleRequest->g  = g;
     basicCycleRequest->b  = b;
     basicCycleRequest->c  = c;
     basicCycleRequest->n  = n;
     basicCycleRequest->a  = a;
     basicCycleRequest->f  = f;
+    basicCycleRequest->pduType = PduType_basicCycle;
     // basicCycleRequest->present = present;
 
     return( basicCycleRequest );
@@ -77,9 +79,10 @@ CamacCycleRequestW_t * camacCycleRequestW;
                 free( request );
                 return( NULL ); 
             }
+            camacCycleRequestR->pduType = PduType_requestR;
 
             // Arrrgggg....!  This prevents us from updating basicCylce asynchronously to for a new request...
-            *camacCycleRequestR = *basicCycle;  // types are equivalent
+            camacCycleRequestR->basicCycle = *basicCycle;  // types are equivalent
             free( basicCycle );  // Might as well; we've made a copy here
 
             /* Flesh out the CHOICE union
@@ -100,6 +103,7 @@ CamacCycleRequestW_t * camacCycleRequestW;
                 return( NULL ); 
             }
 
+            camacCycleRequestW->pduType = PduType_requestW;
             camacCycleRequestW->requestW = *basicCycle;
             free( basicCycle );
             camacCycleRequestW->wdata = wData;

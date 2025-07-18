@@ -4,64 +4,114 @@ BEGIN
 -- A basic CAMAC cycle request.
 --
 BasicCycleRequest ::= SEQUENCE {
-   id  INTEGER,
-   b   INTEGER,
-   c   INTEGER,
-   n   INTEGER(1..25),
-   a   INTEGER(0..15),
-   f   INTEGER(0..31)
+    pduType PduType,
+    id  INTEGER,
+    g   INTEGER,
+    b   INTEGER,
+    c   INTEGER,
+    n   INTEGER(1..25),
+    a   INTEGER(0..15),
+    f   INTEGER(0..31)
 }
 
 -- 
 --  Camac cycle request for a read
 --
-CamacCycleRequestR ::= BasicCycleRequest
-
+CamacCycleRequestR ::= SEQUENCE {
+    pduType     PduType,
+    basicCycle  BasicCycleRequest
+}
 -- 
 --  CAMAC Write cycle request
 --
 CamacCycleRequestW ::= SEQUENCE {
-    requestW   BasicCycleRequest,
-    wdata      INTEGER
+    pduType     PduType,
+    requestW    BasicCycleRequest,
+    wdata       INTEGER
 }
 
 --
 --  Payload of a Request ethernet frame
 --
-CamacRequestFrame ::= SET OF   
-    -- Elements can be in any order, and any are optional
-    requesttype  CHOICE {
-        requestR    CamacCycleRequestR,
-        requestW    CamacCycleRequestW
-    }
+CamacRequestFrame ::= SEQUENCE {
+    pduType PduType,
+    SET OF 
+        -- Elements can be in any order, and any are optional
+        requesttype  CHOICE {
+            requestR    CamacCycleRequestR,
+            requestW    CamacCycleRequestW
+        }
+    
+}
 
 
 --
 --  Reply to a Write request; no data replied
 --
 CamacCycleReplyW ::= SEQUENCE {
-   requestW    BasicCycleRequest,
-   status      INTEGER
+    pduType     PduType,
+    requestW    BasicCycleRequest,
+    status      INTEGER
 }
 
 --
 --  Reply to a Read request; read data included
 --
 CamacCycleReplyR ::= SEQUENCE {
-   requestR    BasicCycleRequest,
-   status      INTEGER,
-   rdata       INTEGER
+    pduType     PduType,
+    requestR    BasicCycleRequest,
+    status      INTEGER,
+    rdata       INTEGER
 }
 
 --
---  Payload of a Reply ethernet frame
---
-CamacReplyFrame ::= SET OF
+--  Payload of a Reply ethernet frame,
+--      - only one reply for frame, even if the respective request frame 
+--        packed multiple requests in a frame. 
+--      - use the Id field to map teplies to their respective requests
+-- 
+CamacReplyFrame ::= SEQUENCE {
+    pduType PduType,
+
     -- Elements can be in any order, and any are optional
     replytype  CHOICE {
         replyR    CamacCycleReplyR,
         replyW    CamacCycleReplyW
     }
+}
+
+
+PduType ::= ENUMERATED {
+    -- CAMAC backplane/crate messages
+    basicCycle(64),
+    requestR,
+    requestW,
+    requestFrame,
+    replyR,
+    replyW,
+    replyFrame,
+    lamAnnounce,
+    lamAck,
+    -- General health/diagnostics messages
+    -- 'Announce' messages sent asynchronously by Crate Controller
+    errorAnnounce(96),
+    warnAnnounce,
+    infoAnnounce,
+    temperatureR,
+    -- FPGA register level access messages
+    registerR(128),
+    registerW,
+    registerResp,
+    -- Reserved
+    reserved0(160),
+    reserved1,
+    reserved2,
+    reserved3,
+    reserved4,
+    reserved5,
+    reserved6,
+    reserved7
+}
 
 END
 

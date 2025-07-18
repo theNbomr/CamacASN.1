@@ -5,7 +5,8 @@ ASN_MODULE_SOURCES=	\
 	CamacRequestFrame.c	\
 	CamacCycleReplyW.c	\
 	CamacCycleReplyR.c	\
-	CamacReplyFrame.c
+	CamacReplyFrame.c	\
+	PduType.c
 
 ASN_MODULE_HEADERS=	\
 	BasicCycleRequest.h	\
@@ -14,7 +15,8 @@ ASN_MODULE_HEADERS=	\
 	CamacRequestFrame.h	\
 	CamacCycleReplyW.h	\
 	CamacCycleReplyR.h	\
-	CamacReplyFrame.h
+	CamacReplyFrame.h	\
+	PduType.h
 
 ASN_MODULE_HEADERS+=INTEGER.h
 ASN_MODULE_HEADERS+=NativeEnumerated.h

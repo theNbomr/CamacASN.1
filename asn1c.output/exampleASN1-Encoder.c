@@ -54,7 +54,7 @@ asn_enc_rval_t      ec;                 /* Encoder return value */
         }
     }
     
-
+    //                        g, b, c, n, a, f
     basicCycleR = buildCycle( 1, 1, 2, 3, 4, 5 );
     basicCycleW = buildCycle( 1, 1, 2, 3, 4, 22 );
 
@@ -68,11 +68,11 @@ asn_enc_rval_t      ec;                 /* Encoder return value */
         exit(1);
     }
 
-    /* Populate the request frame with 2 cycles already composed; one Read & one Write 
+    /* Populate the request frame with 2 requests, already composed; one Read & one Write 
      */
-    asn_set_add( camacRequestFrame, requestR );
-    asn_set_add( camacRequestFrame, requestW );
-    
+    asn_set_add( &(camacRequestFrame->set_of), requestR );
+    asn_set_add( &(camacRequestFrame->set_of), requestW );
+    camacRequestFrame -> pduType = PduType_requestFrame;
     printf( "Ready to encode to BER\n" );
     
     

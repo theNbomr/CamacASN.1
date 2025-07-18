@@ -12,6 +12,7 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include "PduType.h"
 #include <NativeInteger.h>
 #include <constr_SEQUENCE.h>
 
@@ -21,7 +22,9 @@ extern "C" {
 
 /* BasicCycleRequest */
 typedef struct BasicCycleRequest {
+	PduType_t	 pduType;
 	long	 id;
+	long	 g;
 	long	 b;
 	long	 c;
 	long	 n;

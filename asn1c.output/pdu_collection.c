@@ -11,6 +11,7 @@ extern struct asn_TYPE_descriptor_s asn_DEF_CamacRequestFrame;
 extern struct asn_TYPE_descriptor_s asn_DEF_CamacCycleReplyW;
 extern struct asn_TYPE_descriptor_s asn_DEF_CamacCycleReplyR;
 extern struct asn_TYPE_descriptor_s asn_DEF_CamacReplyFrame;
+extern struct asn_TYPE_descriptor_s asn_DEF_PduType;
 
 
 struct asn_TYPE_descriptor_s *asn_pdu_collection[] = {
@@ -22,6 +23,7 @@ struct asn_TYPE_descriptor_s *asn_pdu_collection[] = {
 	&asn_DEF_CamacCycleReplyW,	
 	&asn_DEF_CamacCycleReplyR,	
 	&asn_DEF_CamacReplyFrame,	
+	&asn_DEF_PduType,	
 	0
 };
 

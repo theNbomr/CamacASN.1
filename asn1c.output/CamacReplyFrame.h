@@ -12,11 +12,11 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
-#include <asn_SET_OF.h>
+#include "PduType.h"
 #include "CamacCycleReplyR.h"
 #include "CamacCycleReplyW.h"
 #include <constr_CHOICE.h>
-#include <constr_SET_OF.h>
+#include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,7 +31,8 @@ typedef enum replytype_PR {
 
 /* CamacReplyFrame */
 typedef struct CamacReplyFrame {
-	A_SET_OF(struct replytype {
+	PduType_t	 pduType;
+	struct replytype {
 		replytype_PR present;
 		union CamacReplyFrame__replytype_u {
 			CamacCycleReplyR_t	 replyR;
@@ -40,7 +41,7 @@ typedef struct CamacReplyFrame {
 		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
-	} ) list;
+	} replytype;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;

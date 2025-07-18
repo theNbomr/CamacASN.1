@@ -12,11 +12,13 @@
 #include <asn_application.h>
 
 /* Including external dependencies */
+#include "PduType.h"
 #include <asn_SET_OF.h>
 #include "CamacCycleRequestR.h"
 #include "CamacCycleRequestW.h"
 #include <constr_CHOICE.h>
 #include <constr_SET_OF.h>
+#include <constr_SEQUENCE.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,16 +33,22 @@ typedef enum requesttype_PR {
 
 /* CamacRequestFrame */
 typedef struct CamacRequestFrame {
-	A_SET_OF(struct requesttype {
-		requesttype_PR present;
-		union CamacRequestFrame__requesttype_u {
-			CamacCycleRequestR_t	 requestR;
-			CamacCycleRequestW_t	 requestW;
-		} choice;
+	PduType_t	 pduType;
+	struct set_of {
+		A_SET_OF(struct requesttype {
+			requesttype_PR present;
+			union CamacRequestFrame__set_of__requesttype_u {
+				CamacCycleRequestR_t	 requestR;
+				CamacCycleRequestW_t	 requestW;
+			} choice;
+			
+			/* Context for parsing across buffer boundaries */
+			asn_struct_ctx_t _asn_ctx;
+		} ) list;
 		
 		/* Context for parsing across buffer boundaries */
 		asn_struct_ctx_t _asn_ctx;
-	} ) list;
+	} set_of;
 	
 	/* Context for parsing across buffer boundaries */
 	asn_struct_ctx_t _asn_ctx;
