@@ -24,12 +24,16 @@ although I never intended for it to be compiled.
 ### To-Do
 
 * More thorough testing and fleshing the reference implementation into something more general-purpose.
-* Integrating the asn1c compilation process into the Makefile workflow.
+* Integrating the asn1c compilation process into the Makefile workflow [ Mostly DONE; straightforward so far ]
     * Probably this will require some scripting to handle the changing collection of source files that will be created when new ASN.1 syntax is introduced to the project.
     * [RN] added PduType enumeration, and this required adding .c & .h files to the Makefile and to the repository
 * Create some protocol handlers for the use of CAMAC LAMS
 * Create some protocol handlers for the use of Diagnostics modes and status monitors
 * Create a testbed implementation that uses actual netowrk or other communications channels
+* The **biggie**: how to extract the runtime data from the received BER frame? The sample decoder
+  just seems to decode the PDU on a valid/invalid basis, and I haven't found a way to decompose
+  the PDUs to extract the data that the PDUs carry. This seems especially troublesome where the
+  macros *SET_OF()* and its ilk are in play.
 
 #### An explanatory excerpt from the Makefile:
 
